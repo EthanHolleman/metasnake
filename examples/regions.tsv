@@ -1,0 +1,3 @@
+region_name	filepath
+hg19_genes	/home/ethollem/projects/metaploter/hg19_apprisplus.bed
+hg19_promotors2k	/home/ethollem/projects/GLOE-DRIP/rawdata/hg19/hg19_regions/hg19_apprisplus_promoter2k.bed
