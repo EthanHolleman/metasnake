@@ -10,3 +10,4 @@ dependencies:
   - r-tidyr
   - bioconductor-metagene
   - r-rcolorbrewer
+  - r-umap
