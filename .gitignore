@@ -1,0 +1,5 @@
+.snakemake/
+logs/
+output/
+*.bed
+*.bedgraph
