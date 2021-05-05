@@ -45,10 +45,10 @@ plot_meta <- function(df.agg){
     # geom_ribbon(aes(ymax=mean+se, ymin=mean-se, x=as.numeric(bin), fill=sample), alpha=0.7) +
     # geom_line(color='black') + facet_wrap(~region)
 
-    by_sample <- ggplot(df.agg, aes(x=as.numeric(bin), y=mean, color=region)) + theme_pubclean() +
+    by_sample <- ggplot(df.agg, aes(x=as.numeric(bin), y=mean)) + theme_pubclean() +
     labs(x='bins') + 
-    geom_ribbon(aes(ymax=mean+se, ymin=mean-se, x=as.numeric(bin), fill=region), alpha=0.7) +
-    geom_line(color='black') + facet_wrap(~sample)
+    geom_ribbon(aes(ymax=mean+se, ymin=mean-se, x=as.numeric(bin), fill=region), alpha=0.5) +
+    geom_line(aes(color=region)) + facet_wrap(~sample)
 
     by_sample
 
