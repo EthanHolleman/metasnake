@@ -1,0 +1,3 @@
+sample	strand	url
+NT2DRIPc_fwd	+	https://s3-us-west-1.amazonaws.com/zeeus/HeLa_DRIP_Lionel/NT2_DRIPcA_pos.bw
+NT2DRIPc_rev	-	https://s3-us-west-1.amazonaws.com/zeeus/HeLa_DRIP_Lionel/NT2_DRIPcA_neg.bw
