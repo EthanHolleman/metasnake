@@ -1,5 +1,8 @@
 library(ggplot2)
 library(ggpubr)
+library(tidyr)
+library(RColorBrewer)
+#library(umap)
 
 
 get_sample_from_input_file <- function(input.path){
@@ -38,21 +41,53 @@ read_meta <- function(file.path){
   df.agg  
 }
 
-plot_meta <- function(df.agg){
-  
+plot_meta_region <- function(df.agg, region.name){
+
     # by_region <- ggplot(df.agg, aes(x=as.numeric(bin), y=mean, color=sample)) + theme_pubclean() +
     # labs(x='bins') + 
     # geom_ribbon(aes(ymax=mean+se, ymin=mean-se, x=as.numeric(bin), fill=sample), alpha=0.7) +
     # geom_line(color='black') + facet_wrap(~region)
+    df.agg.region <- subset(df.agg, region==region.name)
+    n_samples <- unique(df.agg.region$sample)
+    colors <- colorRampPalette(brewer.pal(8, "Dark2"))(length(n_samples))
 
-    by_sample <- ggplot(df.agg, aes(x=as.numeric(bin), y=mean)) + theme_pubclean() +
+    by_sample <- ggplot(df.agg.region, aes(x=as.numeric(bin), y=mean)) + theme_pubr() +
     labs(x='bins') + 
-    geom_ribbon(aes(ymax=mean+se, ymin=mean-se, x=as.numeric(bin), fill=region), alpha=0.5) +
-    geom_line(aes(color=region)) + facet_wrap(~sample)
+    geom_ribbon(aes(ymax=mean+se, ymin=mean-se, x=as.numeric(bin), fill=sample), alpha=0.4) +
+    geom_line(aes(color=sample)) + facet_wrap(~sample) + scale_color_manual(values=colors) + 
+    scale_fill_manual(values=colors) + theme(legend.position = "none") + labs(main=region.name)
 
     by_sample
 
 }
+
+# format_df_for_umap <- function(big.df){
+
+#   # samples need to be rows and then columns
+#   # become values, also need to seperate
+#   # by each region
+#   regions.dfs <- list()
+#   regions <- unique(big.df$regions)
+#   for (i in 1:length(regions)){
+
+#     regions.dfs[[i]] <- subset(big.df, region==regions[[i]])
+
+#   }
+#   umap.dfs <- list()
+#   for (i in 1:length(regions.dfs)){
+    
+#     df <- regions.dfs[[i]]
+#     df <- spread(df, sample, bin)
+#     umap <- as.data.frame(umap(df))
+
+
+
+
+#   }
+
+
+
+# }
 
 input.files <- snakemake@input
 dfs <- list()
@@ -61,7 +96,25 @@ for (i in 1:length(input.files)){
 }
 
 big.df <- do.call("rbind", dfs)
-plt <- plot_meta(big.df)
+region_plts <- list()
+
+#colors <- colorRampPalette(brewer.pal(8, "Dark2"))(length(dfs))
+regions <- unique(big.df$region)
+
+
+for (i in 1:length(regions)){
+
+  region_plts[[i]] <- plot_meta_region(big.df, regions[[i]])
+
+}
+
+save.image()
+
+alphabet <- c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H')
+
+
+
+plt <- ggarrange(plotlist=region_plts, labels=regions, nrow=length(region_plts), ncol=1)
 ggsave(as.character(snakemake@output), plt, width=14, height=10, unit='in')
 
 
