@@ -1,26 +1,51 @@
 
 
+rule sort_regions_bed:
+    conda:
+        '../envs/bedtools.yml'
+    input:
+        'output/windowed_regions/{region}.{strand}.bed'
+    output:
+        'output/windowed_regions/{region}.{strand}.sorted.bed'
+    shell:'''
+    bedtools sort -i {input} > {output}
+    '''
+
 rule fisher_exact:
     conda:
         '../envs/bedtools.yml'
     input:
         genome=config['genome'],
-        regions='output/windowed_regions/{region}.{strand}.bed',
-        sample='output/samples/{sample_name}.{strand}.bed'
+        regions='output/windowed_regions/{region}.{strand}.sorted.bed',
+        sample='output/samples/{sample_name}.{strand}.sorted.bed'
     output:
-        'output/fischer/tests/{sample_name}.{region}.{strand}.ftest'
+        'output/fisher/tests/{sample_name}.{region}.{strand}.ftest'
     shell:'''
+    mkdir -p output/fisher/tests
     bedtools fisher -a {input.regions} -b {input.sample} \
     -g {input.genome} > {output}
     '''
 
-rule fisher_exact_plot:
-    conda:
-        '../envs/R.yml'
+rule process_ficher_file:
     input:
-        fwd='output/fischer/{sample_name}.{region}.fwd.ftest',
-        rev='output/fischer/{sample_name}.{region}.rev.ftest'
+        'output/fisher/tests/{sample_name}.{region}.{strand}.ftest'
     output:
-        'output/fischer/Rdata/{sample_name}.{region}.rds'
-    script:""
+        'output/fisher/tests/{sample_name}.{region}.{strand}.ftest.tsv'
+    script:
+        '../scripts/fisher.py'
+
+
+rule concatenate_processed_fisher_files:
+    input:
+        expand(
+            'output/fisher/tests/{sample_name}.{region}.{strand}.ftest.tsv',
+            sample_name=SAMPLES.index.values.tolist(),
+            region=REGIONS.index.values.tolist(),
+            strand=['fwd', 'rev']
+        )
+    output:
+        'output/fisher/tests/all_fischer_files.tsv'
+    script:'../scripts/concat_fisher.py'
+    
+
 
