@@ -1,4 +1,4 @@
-# Read in bedtools fischer test results and convert to tsv
+# Read in bedtools fisher test results and convert to tsv
 # file for later plotting
 # Example format from bedtools website
 
@@ -17,6 +17,7 @@
 # left    right   two-tail    ratio
 # 1   0.0045045   0.0045045   inf
 
+
 TABLE_START = 4
 
 
@@ -25,28 +26,39 @@ def read_fisher(filepath):
     with open(filepath) as handle:
         for i in range(TABLE_START):
             line = handle.readline()
-            line = line[1:].strip().replace(" ", "_")  # remove comment #
+            line = line[1:].strip() # remove comment #
             line = line.split(":")
-            fischer_dict[line[0]] = line[1]
+            fisher_dict[line[0].replace(" ", "_")] = line[1]
 
         # read until lines are uncommented
 
         line = handle.readline()
         while line[0] == "#":
-            line = line.readline()
+            line = handle.readline()
 
         variable_names = line.strip().split("\t")
         values = handle.readline().split("\t")
 
-        fischer_dict.update(dict(zip(variable_names, values)))
+        fisher_dict.update(dict(zip(variable_names, values)))
 
-    return fischer_dict
+    return fisher_dict
 
 
-def write_as_tsv(fischer_dict, output_path):
+def write_as_tsv(fisher_dict, output_path):
     with open(output_path, "w") as handle:
-        header = "\t".join(fischer_dict.keys()) + "\n"
-        row = "\t".join(fischer_dict.values())
+        header = "\t".join(fisher_dict.keys()) + "\n"
+        row = "\t".join(fisher_dict.values())
         handle.write(header)
         handle.write(row)
     return output_path
+
+
+def main():
+    input_file = str(snakemake.input)
+    output = str(snakemake.output)
+    fisher_data = read_fisher(input_file)
+    write_as_tsv(fisher_data, output)
+
+
+if __name__ == "__main__":
+    main()
