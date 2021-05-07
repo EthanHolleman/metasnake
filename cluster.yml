@@ -5,6 +5,6 @@ __default__:
   cpus: "{threads}"
   name: "{rule}.{wildcards}"
   output: "logs/{rule}.{wildcards}.out"
-  time: "01:00:00"
+  time: "04:00:00"
   email: 'etholleman@ucdavis.edu'
   mem: "32000"
