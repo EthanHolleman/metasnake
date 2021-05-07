@@ -1,6 +1,6 @@
 rule make_metaplots:
     conda:
-        'envs/R.yml'
+        '../envs/R.yml'
     input:
         expand(
             'output/average_coverage/{region}.{sample_name}.avg.tsv',
@@ -9,4 +9,4 @@ rule make_metaplots:
             )
     output:
         'output/metaplot.png'
-    script:"scripts/metaplot.R"
+    script:"../scripts/metaplot.R"

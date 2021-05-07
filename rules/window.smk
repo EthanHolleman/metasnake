@@ -21,7 +21,7 @@ rule seperate_window_strands_rev:
 
 rule window_regions_fwd:
     conda:
-        'envs/bedtools.yml'
+        '../envs/bedtools.yml'
     input:
         'output/windowed_regions/{region}.fwd.bed'
     output:
@@ -37,7 +37,7 @@ rule window_regions_fwd:
 
 rule window_regions_rev:
     conda:
-        'envs/bedtools.yml'
+        '../envs/bedtools.yml'
     input:
         'output/windowed_regions/{region}.rev.bed'
     output:
@@ -63,7 +63,7 @@ rule sort_windowed_region_file:
 
 rule window_coverage_bed:
     conda:
-        'envs/bedtools.yml'
+        '../envs/bedtools.yml'
     input:
         sample='output/samples/{sample_name}.{strand}.sorted.bed',
         windows='output/windowed_regions/{region}.window.{strand}.sorted.bed'

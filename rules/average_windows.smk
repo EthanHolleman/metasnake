@@ -1,6 +1,6 @@
 rule average_coverage_by_window:
     conda: 
-        'envs/bedtools.yml'
+        '../envs/bedtools.yml'
     input:
         'output/window_coverage/{region}.{sample_name}.all.coverage.sorted.bed'
     output:
