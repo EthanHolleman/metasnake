@@ -18,7 +18,7 @@ rule sym_link_sample:
     output:
         'samples/{sample_name}.{bed_or_bedgraph}'
     shell:'''
-    ln -s {input} {output}
+    ln -sf {input} {output}
     '''
 
 rule seperate_sample_fwd_strand:

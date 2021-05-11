@@ -18,7 +18,8 @@ rule sym_link_region:
     params:
         region_file=lambda wildcards: REGIONS.loc[wildcards.region_name]['filepath']
     shell:'''
-    ln -s {params.region_file} {output}
+    mkdir -p output/windowed_regions/sym_links
+    ln -sf {params.region_file} {output}
     '''
 
 # just like samples assume regions to be bed6 (strands and scores) if

@@ -20,7 +20,7 @@ rule sym_link_sample:
     params:
         sample_file=lambda wildcards: SAMPLES.loc[wildcards.sample_name]['filepath']
     shell:'''
-    ln -s {params.sample_file} {output}
+    ln -sf {params.sample_file} {output}
     '''
 
 
