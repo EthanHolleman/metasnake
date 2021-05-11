@@ -1,4 +1,0 @@
-samples: "samples.tsv"
-regions: "regions.tsv"
-n_windows: 100
-cluster_file: "cluster.yml"
