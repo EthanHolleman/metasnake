@@ -1,0 +1,6 @@
+samples: "samples.tsv"
+regions: "regions.tsv"
+n_windows: 100
+cluster_file: "cluster.yml"
+genome: "hg19.chrom.sizes"
+name: "hg19_drip_metaplot"

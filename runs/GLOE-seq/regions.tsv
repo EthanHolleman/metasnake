@@ -1,0 +1,3 @@
+region_name	filepath
+hg19_genes	/home/ethollem/projects/metaploter/hg19_apprisplus.bed
+DRIPc	data/DRIP/DRIPc.sorted.bed
