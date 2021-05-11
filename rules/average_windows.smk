@@ -11,7 +11,7 @@ rule average_coverage_by_window_bedgraph:
     input:
         'output/window_coverage/{region}.{sample_name}.coverage.bedgraph'
     output:
-        'output/average_coverage/{region}.{sample_name}.avg.tsv'
+        'output/average_coverage/bedgraph/{region}.{sample_name}.avg.tsv'
     shell:'''
     bedtools groupby -i {input} -g 4 -c 5 -o mean > {output}  && [[ -s {output} ]]
     '''

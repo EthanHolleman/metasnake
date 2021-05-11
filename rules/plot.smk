@@ -1,12 +1,18 @@
+
+def metaplot_input(*args, **kwargs):
+    return expand(
+        expand(
+        'output/average_coverage/{bed_or_bedgraph}/{region}.{sample_name}.avg.tsv',
+        zip, bed_or_bedgraph=FILE_EXT, sample_name=SAMPLE_NAMES, allow_missing=True
+        ),
+        region=REGION_NAMES
+    )
+
 rule make_metaplots:
     conda:
         '../envs/R.yml'
     input:
-        expand(
-            'output/average_coverage/{region}.{sample_name}.avg.tsv',
-            region=REGIONS.index.values.tolist(),
-            sample_name=SAMPLES.index.values.tolist()
-            )
+        lambda wildcards: metaplot_input()
     output:
         'output/plots/{run_name}.metaplot.png'
     script:"../scripts/metaplot.R"
