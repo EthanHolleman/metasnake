@@ -16,6 +16,7 @@ def concatenate(filepaths, output_path):
                     handle.write(content[1])
                 else:
                     assert ref_header == header, "Headers do not match!"
+                    handle.write('\n')
                     handle.write(content[1])
     return output_path
 
