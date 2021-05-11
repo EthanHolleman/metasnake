@@ -1,5 +1,9 @@
 
 def metaplot_input(*args, **kwargs):
+    '''Specifies input files for make_metaplot rule in a way that is aware
+    of the sample files original file extension. This avoids confusing
+    bed and bedgraph input sample files.
+    '''
     return expand(
         expand(
         'output/average_coverage/{bed_or_bedgraph}/{region}.{sample_name}.avg.tsv',
@@ -7,6 +11,7 @@ def metaplot_input(*args, **kwargs):
         ),
         region=REGION_NAMES
     )
+
 
 rule make_metaplots:
     conda:
