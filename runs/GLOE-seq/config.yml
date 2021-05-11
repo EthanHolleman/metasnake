@@ -1,6 +1,6 @@
-samples: "samples.tsv"
-regions: "regions.tsv"
+samples: "runs/GLOE-seq/samples.tsv"
+regions: "runs/GLOE-seq/regions.tsv"
 n_windows: 100
 cluster_file: "cluster.yml"
-genome: "hg19.chrom.sizes"
-name: "hg19_drip_metaplot"
+genome: "data/hg19/hg19.chrom.sizes"
+name: "GLOE-seq_metaplot"

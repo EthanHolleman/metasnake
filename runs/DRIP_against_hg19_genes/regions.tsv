@@ -1,2 +1,2 @@
 region_name	filepath
-hg19_genes	/home/ethollem/projects/metaploter/data/hg19/hg19.chrom.sizes
+hg19_genes	/home/ethollem/projects/metaploter/data/hg19/hg19_apprisplus_gene.bed
