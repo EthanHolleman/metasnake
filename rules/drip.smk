@@ -53,13 +53,19 @@ rule concatenate_drip_bed_files:
     '''
 
 
+
+
 rule sort_concat_drip_bed:
+    conda:
+        '../envs/bedtools.yml'
     input:
         'data/DRIP/DRIPc.bed'
     output:
         'data/DRIP/DRIPc.sorted.bed'
+    params:
+        genome=config['genome']
     shell:'''
-    sort -k 1,1 -k2,2n {input} > {output}
+    sort -k1,1 -k2,2n {input} > {output}
     '''
 
 
