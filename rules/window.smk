@@ -141,9 +141,9 @@ rule window_coverage_bedgraph:
         windows='output/windowed_regions/bedgraph_regions/{region_name}.window.sorted.bedgraph',
         sample='output/samples/sorted_bedgraph/{sample_name}.sorted.bedgraph'
     output:
-        'output/window_coverage/{region}.{sample_name}.coverage.bedgraph'
+        'output/window_coverage/{region_name}.{sample_name}.coverage.bedgraph'
     shell:'''
-    bedtools map -a {input.windows} -b {input.sample} -c 4 -o sum > {output} 
+    bedtools map -a {input.windows} -b {input.sample} -null "0" -c 4 -o sum > {output} 
     '''
 
 
