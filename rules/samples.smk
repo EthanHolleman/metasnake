@@ -1,9 +1,9 @@
 from pathlib import Path
 
 SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
-print(SAMPLE_NAMES)
 FILE_EXT = [Path(SAMPLES.loc[sample_name]['filepath']).suffix.replace('.', '') 
             for sample_name in SAMPLE_NAMES]
+print(FILE_EXT)
 
 
 rule sym_link_all_samples:
