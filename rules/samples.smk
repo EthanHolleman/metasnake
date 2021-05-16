@@ -16,54 +16,46 @@ rule sym_link_all_samples:
 
 rule sym_link_sample:
     output:
-        'output/samples/sym_links/{sample_name}.{bed_or_bedgraph}'
+        'output/samples/sym_links/{sample_name}.{strand}.{bed_or_bedgraph}'
     params:
         sample_file=lambda wildcards: SAMPLES.loc[wildcards.sample_name]['filepath']
     shell:'''
     ln -sf {params.sample_file} {output}
     '''
 
-
-rule seperate_bed6_strands_fwd:
+rule sort_bed_for_bedgraph_conversion:
+    # sort a bed before converting to bedgraph
     input:
-        'output/samples/sym_links/{sample_name}.bed'
+        'output/samples/sym_links/{sample_name}.{strand}.bed'
     output:
-        'output/samples/stranded/{sample_name}.fwd.bed'
+        'output/samples/sym_links/{sample_name}.{strand}.sorted.bed'
     shell:'''
-    mkdir -p output/samples/stranded
-    awk  '$6 == "+" {{print $0}}' {input} > {output}
+    sort -k 1,1 {input} > {output}
     '''
 
 
-rule seperate_bed6_strands_rev:
-    input:
-        'output/samples/sym_links/{sample_name}.bed'
-    output:
-        'output/samples/stranded/{sample_name}.rev.bed'
-    shell:'''
-    mkdir -p output/samples/stranded
-    awk  '$6 == "-" {{print $0}}' {input} > {output}
-    '''
 
-
-rule sort_samples_bed6:
+rule convert_bed_to_bedgraph:
+    # convert all input bed files to bedgraph using bedtools genome cov
+    conda:
+        '../envs/bedtools.yml'
     input:
-        'output/samples/stranded/{sample_name}.{strand}.bed'
+        'output/samples/sym_links/{sample_name}.{strand}.sorted.bed'
     output:
-        'output/samples/sorted_bed/{sample_name}.{strand}.sorted.bed'
+        'output/samples/bed_to_bedgraph/{sample_name}.{strand}.bedgraph'
+    params:
+        genome=config['genome']
     shell:'''
-    mkdir -p output/samples/sorted_bed/
-    sort -k1,1 -k2,2n {input} > {output}
+    bedtools genomecov -bg -g {params.genome} -i {input} > {output}
     '''
 
 
 rule sort_samples_bedgraph:
     input:
-        'output/samples/sym_links/{sample_name}.bedgraph'
+        'ooutput/samples/bed_to_bedgraph/{sample_name}.{strand}.bedgraph'
     output:
-        'output/samples/sorted_bedgraph/{sample_name}.sorted.bedgraph'
+        'output/samples/bed_to_bedgraph/{sample_name}.{strand}.sorted.bedgraph'
     shell:'''
-    mkdir -p output/samples/sorted_bedgraph/
     sort -k1,1 -k2,2n {input} > {output}
     '''
 
