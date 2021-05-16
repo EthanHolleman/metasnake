@@ -22,26 +22,33 @@ rule sym_link_region:
     ln -sf {params.region_file} {output}
     '''
 
-# just like samples assume regions to be bed6 (strands and scores) if
-# # passed as bed files
-# rule seperate_window_strands_fwd:
-#     input:
-#         'output/windowed_regions/sym_links/{region_name}.bed'
-#     output:
-#         'output/windowed_regions/stranded/{region_name}.fwd.bed' 
-#     shell:'''
-#     awk '$6 == "+" {{print $0}}' {input} > {output}
-#     '''
+
+rule seperate_fwd_from_combined_stranded_regions:
+    # allows input to be provided that has both strands. Strand in the
+    # regions file should be set to both. Since has the strand assume
+    # to be bed6 formated
+    input:
+        'output/windowed_regions/sym_links/{region_name}.both.bed'
+    output:
+        'output/windowed_regions/sym_links/{region_name}.fwd.bed'
+    shell:'''
+    awk '$6 == "+" {{print $0}}' {input} > {output}
+    '''
 
 
-# rule seperate_window_strands_rev:
-#     input:
-#         'output/windowed_regions/sym_links/{region_name}.bed'
-#     output:
-#         'output/windowed_regions/stranded/{region_name}.rev.bed'
-#     shell:'''
-#     awk '$6 == "-" {{print $0}}' {input} > {output}
-#     '''
+rule seperate_rev_from_combined_stranded_regions:
+    # allows input to be provided that has both strands. Strand in the
+    # regions file should be set to both. Since has the strand assume
+    # to be bed6 formated
+    input:
+        'output/windowed_regions/sym_links/{region_name}.both.bed'
+    output:
+        'output/windowed_regions/sym_links/{region_name}.rev.bed'
+    shell:'''
+    awk '$6 == "-" {{print $0}}' {input} > {output}
+    '''
+
+
 rule sort_regions:
     input:
         'output/windowed_regions/sym_links/{region_name}.{strand}.{bed_or_bedgraph}'
