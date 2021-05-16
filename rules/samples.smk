@@ -3,14 +3,16 @@ from pathlib import Path
 SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
 FILE_EXT = [Path(SAMPLES.loc[sample_name]['filepath']).suffix.replace('.', '') 
             for sample_name in SAMPLE_NAMES]
+STRAND = SAMPLES['strand'].tolist()
 
 
 
 rule sym_link_all_samples:
     input:
         expand(
-            'output/samples/sym_links/{sample_name}.{bed_or_bedgraph}',
-            zip, sample_name=SAMPLE_NAMES, bed_or_bedgraph=FILE_EXT
+            'output/samples/sym_links/{sample_name}.{strand}.{bed_or_bedgraph}',
+            zip, sample_name=SAMPLE_NAMES, bed_or_bedgraph=FILE_EXT,
+            strand=STRAND  # fwd rev or all 
         )
 
 
@@ -23,6 +25,7 @@ rule sym_link_sample:
     ln -sf {params.sample_file} {output}
     '''
 
+
 rule sort_bed_for_bedgraph_conversion:
     # sort a bed before converting to bedgraph
     input:
@@ -32,7 +35,6 @@ rule sort_bed_for_bedgraph_conversion:
     shell:'''
     sort -k 1,1 {input} > {output}
     '''
-
 
 
 rule convert_bed_to_bedgraph:

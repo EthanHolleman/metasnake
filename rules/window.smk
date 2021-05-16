@@ -14,7 +14,7 @@ rule sym_link_all_regions:
 
 rule sym_link_region:
     output:
-        'output/windowed_regions/sym_links/{region_name}.{bed_or_bedgraph}'
+        'output/windowed_regions/sym_links/{region_name}.{strand}.{bed_or_bedgraph}'
     params:
         region_file=lambda wildcards: REGIONS.loc[wildcards.region_name]['filepath']
     shell:'''
@@ -23,34 +23,72 @@ rule sym_link_region:
     '''
 
 # just like samples assume regions to be bed6 (strands and scores) if
-# passed as bed files
-rule seperate_window_strands_fwd:
+# # passed as bed files
+# rule seperate_window_strands_fwd:
+#     input:
+#         'output/windowed_regions/sym_links/{region_name}.bed'
+#     output:
+#         'output/windowed_regions/stranded/{region_name}.fwd.bed' 
+#     shell:'''
+#     awk '$6 == "+" {{print $0}}' {input} > {output}
+#     '''
+
+
+# rule seperate_window_strands_rev:
+#     input:
+#         'output/windowed_regions/sym_links/{region_name}.bed'
+#     output:
+#         'output/windowed_regions/stranded/{region_name}.rev.bed'
+#     shell:'''
+#     awk '$6 == "-" {{print $0}}' {input} > {output}
+#     '''
+rule sort_regions:
     input:
-        'output/windowed_regions/sym_links/{region_name}.bed'
+        'output/windowed_regions/sym_links/{region_name}.{strand}.{bed_or_bedgraph}'
     output:
-        'output/windowed_regions/stranded/{region_name}.fwd.bed' 
+        'output/windowed_regions/sorted/{region_name}.{strand}.sorted.{bed_or_bedgraph}'
     shell:'''
-    awk '$6 == "+" {{print $0}}' {input} > {output}
+    sort -k 1,1 {input} > {output}
     '''
 
 
-rule seperate_window_strands_rev:
-    input:
-        'output/windowed_regions/sym_links/{region_name}.bed'
-    output:
-        'output/windowed_regions/stranded/{region_name}.rev.bed'
-    shell:'''
-    awk '$6 == "-" {{print $0}}' {input} > {output}
-    '''
-
-
-rule window_regions_fwd_bed:
+rule convert_bed_regions_to_bedgraph:
     conda:
         '../envs/bedtools.yml'
     input:
-        'output/windowed_regions/stranded/{region_name}.fwd.bed'
+        'output/windowed_regions/sorted/{region_name}.{strand}.sorted.bed'
     output:
-        'output/windowed_regions/stranded_windows/{region_name}.window.fwd.bed'
+        'output/windowed_regions/sorted/{region_name}.{strand}.sorted.bedgraph'
+    params:
+        genome=config['genome']
+    shell:'''
+    bedtools genomecov -bg -g {params.genome} -i {input} > {output}
+    '''
+
+
+rule window_bedgraph_regions_fwd:
+    conda:
+        '../envs/bedtools.yml'
+    input:
+        'output/windowed_regions/sorted/{region_name}.fwd.sorted.bedgraph'
+    output:
+        'output/windowed_regions/windows/{region_name}.fwd.window.bedgraph'
+    params:
+        window_size = config['n_windows'],
+    shell:'''
+    mkdir -p output/windowed_regions
+    bedtools makewindows -b {input} \
+    -n 100 -i winnum > {output}
+    '''
+
+# treat all regions as fwd
+rule window_bedgraph_regions_fwd:
+    conda:
+        '../envs/bedtools.yml'
+    input:
+        'output/windowed_regions/sorted/{region_name}.all.sorted.bedgraph'
+    output:
+        'output/windowed_regions/windows/{region_name}.all.window.bedgraph'
     params:
         window_size = config['n_windows'],
     shell:'''
@@ -60,13 +98,13 @@ rule window_regions_fwd_bed:
     '''
 
 
-rule window_regions_rev_bed:
+rule window_bedgraph_regions_rev:
     conda:
         '../envs/bedtools.yml'
     input:
-        'output/windowed_regions/stranded/{region_name}.rev.bed'
+        'output/windowed_regions/sorted/{region_name}.rev.sorted.bedgraph'
     output:
-        'output/windowed_regions/stranded_windows/{region_name}.window.rev.bed'
+        'output/windowed_regions/windows/{region_name}.rev.window.bedgraph'
     params:
         window_size = config['n_windows'],
     shell:'''
@@ -76,73 +114,27 @@ rule window_regions_rev_bed:
     '''
 
 
-rule window_regions_bedgraph:
+rule sort_windowed_region_file:
     conda:
         '../envs/bedtools.yml'
     input:
-        'output/windowed_regions/sym_links/{region_name}.bedgraph'
+        'output/windowed_regions/windows/{region_name}.{strand}.window.bedgraph'
     output:
-        'output/windowed_regions/bedgraph_regions/{region_name}.window.bedgraph'
-    shell:'''
-    mkdir -p output/windowed_regions/bedgraph_regions
-    bedtools makewindows -b {input} \
-    -n 100 -i winnum > {output}
-    '''
-
-
-rule sort_windowed_bed_region_file:
-    conda:
-        '../envs/bedtools.yml'
-    input:
-        'output/windowed_regions/stranded_windows/{region}.window.{strand}.bed'
-    output:
-        'output/windowed_regions/stranded_windows/{region}.window.{strand}.sorted.bed'
+        'output/windowed_regions/windows/{region_name}.{strand}.window.sorted.bedgraph'
     shell:'''
     sort -k1,1 -k2,2n {input} > {output}
-    '''
-
-
-rule sort_windowed_bedgraph_region_file:
-    conda:
-        '../envs/bedtools.yml'
-    input:
-        'output/windowed_regions/bedgraph_regions/{region_name}.window.bedgraph'
-    output:
-        'output/windowed_regions/bedgraph_regions/{region_name}.window.sorted.bedgraph'
-    shell:'''
-    sort -k1,1 -k2,2n {input} > {output}
-    '''
-
-
-rule window_coverage_bed:
-    conda:
-        '../envs/bedtools.yml'
-    input:
-        windows='output/windowed_regions/stranded_windows/{region}.window.{strand}.sorted.bed',
-        sample='output/samples/sorted_bed/{sample_name}.{strand}.sorted.bed'
-    output:
-        'output/window_coverage/{region}.{sample_name}.{strand}.coverage.bed'
-    shell:'''
-    mkdir -p output/window_coverage
-    bedtools coverage -sorted -a {input.windows} -b {input.sample} -counts > {output}
     '''
 
 
 rule window_coverage_bedgraph:
-    # handle samples given as bedgraph input. This requires bedtools map since
-    # one line will represent up to n number of "reads" instead of the one
-    # to one relationship for regular bed files. So we take the sum of
-    # the scores of bedgraph locations that overlap window intervals. 
-    # STILL NEEDS WORK:
-    # Need a way to recognize the input files read from tsv are bed vs
-    # bedgraph
+
     conda:
         '../envs/bedtools.yml'
     input:
-        windows='output/windowed_regions/bedgraph_regions/{region_name}.window.sorted.bedgraph',
-        sample='output/samples/sorted_bedgraph/{sample_name}.sorted.bedgraph'
+        windows='output/windowed_regions/windows/{region_name}.{strand}.window.sorted.bedgraph',
+        sample='output/samples/bed_to_bedgraph/{sample_name}.{strand}.sorted.bedgraph'
     output:
-        'output/window_coverage/{region_name}.{sample_name}.coverage.bedgraph'
+        'output/window_coverage/{region_name}.{sample_name}.{strand}.coverage.bedgraph'
     shell:'''
     bedtools map -a {input.windows} -b {input.sample} -null "0" -c 4 -o sum > {output} 
     '''
