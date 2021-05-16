@@ -10,7 +10,7 @@ STRAND = SAMPLES['strand'].tolist()
 rule sym_link_all_samples:
     input:
         expand(
-            'output/samples/sym_links/{sample_name}.{strand}.{bed_or_bedgraph}',
+            'output/samples/{sample_name}.{strand}.{bed_or_bedgraph}',
             zip, sample_name=SAMPLE_NAMES, bed_or_bedgraph=FILE_EXT,
             strand=STRAND  # fwd rev or all 
         )
@@ -18,7 +18,7 @@ rule sym_link_all_samples:
 
 rule sym_link_sample:
     output:
-        'output/samples/sym_links/{sample_name}.{strand}.{bed_or_bedgraph}'
+        'output/samples/{sample_name}.{strand}.{bed_or_bedgraph}'
     params:
         sample_file=lambda wildcards: SAMPLES.loc[wildcards.sample_name]['filepath']
     shell:'''
@@ -29,9 +29,9 @@ rule sym_link_sample:
 rule sort_bed_for_bedgraph_conversion:
     # sort a bed before converting to bedgraph
     input:
-        'output/samples/sym_links/{sample_name}.{strand}.bed'
+        'output/samples/{sample_name}.{strand}.bed'
     output:
-        'output/samples/sym_links/{sample_name}.{strand}.sorted.bed'
+        'output/samples/{sample_name}.{strand}.sorted.bed'
     shell:'''
     sort -k 1,1 {input} > {output}
     '''
@@ -42,9 +42,9 @@ rule convert_bed_to_bedgraph:
     conda:
         '../envs/bedtools.yml'
     input:
-        'output/samples/sym_links/{sample_name}.{strand}.sorted.bed'
+        'output/samples/{sample_name}.{strand}.sorted.bed'
     output:
-        'output/samples/bed_to_bedgraph/{sample_name}.{strand}.bedgraph'
+        'output/samples/{sample_name}.{strand}.bedgraph'
     params:
         genome=config['genome']
     shell:'''
@@ -54,9 +54,9 @@ rule convert_bed_to_bedgraph:
 
 rule sort_samples_bedgraph:
     input:
-        'ooutput/samples/bed_to_bedgraph/{sample_name}.{strand}.bedgraph'
+        'output/samples/{sample_name}.{strand}.bedgraph'
     output:
-        'output/samples/bed_to_bedgraph/{sample_name}.{strand}.sorted.bedgraph'
+        'output/samples/{sample_name}.{strand}.sorted.bedgraph'
     shell:'''
     sort -k1,1 -k2,2n {input} > {output}
     '''
