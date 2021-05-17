@@ -1,0 +1,5 @@
+sample_name	filepath	strand
+ssR749Hf	/home/ethollem/projects/metaploter/data/RNAss/ssR749Hfwd.fwd.bedgraph	fwd
+ssR749H	/home/ethollem/projects/metaploter/data/RNAss/ssR749Hrev.rev.bedgraph	rev
+ssWT	/home/ethollem/projects/metaploter/data/RNAss/ssWTfwd.fwd.bedgraph	fwd
+ssWT	/home/ethollem/projects/metaploter/data/RNAss/ssWTrev.rev.bedgraph	rev
