@@ -9,7 +9,9 @@ RUN_NAME = config['name']
 wildcard_constraints:
    region = '\w+',
    sample_name = '\w+',
-   strand = '\w+'
+   strand = '\w+',
+   bed_or_bedgraph = '\w+',
+   fwd_rev_strand = '\bfwd\b|\brev\b'
 
 
 include: 'rules/drip.smk'
@@ -18,10 +20,12 @@ include: 'rules/plot.smk'
 include: 'rules/window.smk'
 include: 'rules/average_windows.smk'
 include: 'rules/samples.smk'
+include: 'rules/RNA_struct_scores.smk'
 
 METAPLOT = 'output/plots/{}.metaplot.png'.format(RUN_NAME)
-FISHER_PLOT = 'output/plots/{}.fisher.png'.format(RUN_NAME)
-OVERLAP_DIST = 'output/plots/{}.overlap_count_dist.png'.format(RUN_NAME)
+# # These plots below are in progress
+# FISHER_PLOT = 'output/plots/{}.fisher.png'.format(RUN_NAME)
+# OVERLAP_DIST = 'output/plots/{}.overlap_count_dist.png'.format(RUN_NAME)
 
 REGION_FILES = REGIONS['filepath'].tolist()
 SAMPLE_FILES = SAMPLES['filepath'].tolist()
@@ -38,9 +42,11 @@ SAMPLE_FILES = SAMPLES['filepath'].tolist()
 
 rule all:
     input:
-      plots=[METAPLOT, FISHER_PLOT],
-      region_files=REGION_FILES,
-      sample_files=SAMPLE_FILES
+      #plots=[METAPLOT],
+      #'output/windowed_regions/windows/hg19_genes.fwd.window.bedgraph'
+      'output/window_coverage/window_coverage_all_samples.done'
+      # region_files=REGION_FILES,
+      # sample_files=SAMPLE_FILES
 
 
 
