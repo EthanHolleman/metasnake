@@ -1,5 +1,5 @@
 sample_name	filepath	strand
-ssR749Hf	/home/ethollem/projects/metaploter/data/RNAss/ssR749Hfwd.fwd.bedgraph	fwd
-ssR749H	/home/ethollem/projects/metaploter/data/RNAss/ssR749Hrev.rev.bedgraph	rev
-ssWT	/home/ethollem/projects/metaploter/data/RNAss/ssWTfwd.fwd.bedgraph	fwd
-ssWT	/home/ethollem/projects/metaploter/data/RNAss/ssWTrev.rev.bedgraph	rev
+ssR749H	data/RNAss/R749H_neg_structure_score_no_FP.bedgraph	fwd
+ssR749H	data/RNAss/R749H_pos_structure_score_no_FP.bedgraph	rev
+ssWT	data/RNAss/WT_neg_structure_score_no_FP.bedgraph	fwd
+ssWT	data/RNAss/WT_pos_structure_score_no_FP.bedgraph	rev
