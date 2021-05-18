@@ -20,7 +20,9 @@ include: 'rules/plot.smk'
 include: 'rules/window.smk'
 include: 'rules/average_windows.smk'
 include: 'rules/samples.smk'
-include: 'rules/RNA_struct_scores.smk'
+include: 'rules/prep_RNA_struct_scores.smk'
+include: 'rules/prep_hg19_genes.smk'
+
 
 METAPLOT = 'output/plots/{}.metaplot.png'.format(RUN_NAME)
 # # These plots below are in progress
@@ -29,6 +31,9 @@ METAPLOT = 'output/plots/{}.metaplot.png'.format(RUN_NAME)
 
 REGION_FILES = REGIONS['filepath'].tolist()
 SAMPLE_FILES = SAMPLES['filepath'].tolist()
+SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
+REGION_NAMES = REGIONS['region_name'].tolist()
+STRAND = SAMPLES['strand'].tolist()
 
 # Sample and/or region files may require additional processing to create
 # the files that will actually go into the pipeline. This is the case for
@@ -42,11 +47,9 @@ SAMPLE_FILES = SAMPLES['filepath'].tolist()
 
 rule all:
     input:
-      #plots=[METAPLOT],
-      #'output/windowed_regions/windows/hg19_genes.fwd.window.bedgraph'
-      'output/window_coverage/window_coverage_all_samples.done'
-      # region_files=REGION_FILES,
-      # sample_files=SAMPLE_FILES
+      regions=REGION_FILES,  # check if any region or sample files need prep
+      samples=SAMPLE_FILES,
+      plots=[METAPLOT]
 
 
 
