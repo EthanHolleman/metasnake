@@ -9,12 +9,12 @@ import numpy as np
 
 CHRS = [f"chr{name}" for name in list(range(1, 3))]
 MEAN_LEN = 4000
-SD = 2000
-NUM_FEATS = 10000
+SD = 0
+NUM_FEATS = 10
 CHR_LEN = 1e6
-OBS_PER_FEAT = 10
-NUM_REGIONS = 4
-NUM_SAMPLES = 4
+OBS_PER_FEAT = 1000
+NUM_REGIONS = 2
+NUM_SAMPLES = 2
 OUTPUT_DIR = "test_beds"
 
 
@@ -31,7 +31,8 @@ def random_region():
         chromo = random.choice(CHRS)
         start = random.randint(0, CHR_LEN)
         #end = start + abs(int(np.random.normal(MEAN_LEN, SD))) + 1
-        end = start + random.randint(start+1, start+1+MEAN_LEN)
+        #end = start + random.randint(start+1, start+1+MEAN_LEN)
+        end = start + MEAN_LEN
         strand = random.choice(["-", "+"])
         assert end > start, f"End position in region < start! {end - start}"
         features.append(
@@ -54,10 +55,19 @@ def random_sample_from_regions(regions):
     sample_obs = []
     for each_region in regions:
         for each_feature in each_region:
+            chromo, start, end, name, score, strand = each_feature
             for i in range(OBS_PER_FEAT):
-                chromo, start, end, name, score, strand = each_feature
-                obs_start = random.randint(start, end-1)
-                obs_end = random.randint(obs_start+1, end)
+                
+                if strand == "+":
+                    obs_start = random.randint(start+1, start+2)
+                    obs_end = obs_start + 5
+                else:
+                    obs_start = end-5
+                    obs_end = end - 1
+
+                #obs_start = abs(int(np.random.normal(MEAN_LEN, SD))) + 1
+                #obs_end = random.randint(obs_start+1, end)
+                
 
                 assert obs_start >= start and obs_end <= end, 'Observation outside feature!'
                 assert obs_end > obs_start, f'End not greater than start! {obs_start} {obs_end}'
@@ -100,6 +110,7 @@ regions: "{regions_file}"
 n_windows: 100
 cluster_file: "cluster.yml"
 genome: "test_beds/hg19.chrom.sizes"
+name: "test_metaploter"
 '''
     config_path = Path(OUTPUT_DIR).joinpath('config.yml')
     with open(str(config_path), 'w') as handle:
