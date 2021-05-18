@@ -9,21 +9,22 @@
 #     ln -sf {params.region_file} {output}
 #     '''
 
-rule sort_bedgraph_inputs:
-    output:
-        'output/windowed_regions/sorted_regions/{region_name}.{strand}.bedgraph'
-    params:
-        filepath=lambda wildcards: REGIONS.loc[(REGIONS['region_name'] == wildcards.region_name) & (REGIONS['strand'] == wildcards.strand)]['filepath'][0]
-    shell:'''
-    sort -k 1,1 -k2,2n {params.filepath} > {output}
-    '''
+# rule sort_bedgraph_inputs:
+#     output:
+#         'output/windowed_regions/sorted_regions/{region_name}.{strand}.sorted.bedgraph'
+#     params:
+#         filepath=lambda wildcards: REGIONS.loc[(REGIONS['region_name'] == wildcards.region_name) & (REGIONS['strand'] == wildcards.strand)]['filepath'][0]
+#     shell:'''
+#     mkdir -p output/windowed_regions/sorted_regions/
+#     sort -k 1,1 -k2,2n {params.filepath} > {output}
+#     '''
 
 
 rule make_window_regions:
     conda:
         '../envs/bedtools.yml'
     input:
-        'output/windowed_regions/sorted_regions/{region_name}.{strand}.bedgraph'
+        'output/prep/hg19_apprisplus.{strand}.sorted.bedgraph'
     output:
         'output/windowed_regions/windows/{region_name}.{strand}.windowed.bedgraph'
     params:
@@ -57,7 +58,7 @@ rule window_coverage_bedgraph:
     output:
         'output/window_coverage/coverage/{region_name}.{sample_name}.{strand}.coverage.bedgraph'
     shell:'''
-    bedtools map -a {input.windows} -b {input.sample} -null "0" -c 4 -o sum > {output} 
+    bedtools map -a {input.windows} -b {input.sample} -null "0" -c 4 -o mean > {output} 
     '''
 
 

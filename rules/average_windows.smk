@@ -13,6 +13,7 @@ rule average_coverage_by_window_bedgraph:
     output:
         'output/average_coverage/bedgraph/{region_name}.{sample_name}.avg.tsv'
     shell:'''
+    mkdir -p output/average_coverage/bedgraph/
     bedtools groupby -i {input} -g 4 -c 5 -o mean > {output}  && [[ -s {output} ]]
     '''
 

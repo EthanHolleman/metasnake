@@ -53,7 +53,7 @@ rule sort_og_bedgraph:
     input:
         'output/prep/hg19_apprisplus.{strand}.bedgraph'
     output:
-        'output/prep/hg19_apprisplus.{strand}.bedgraph'
+        'output/prep/hg19_apprisplus.{strand}.sorted.bedgraph'
     shell:'''
     sort -k1,1 -k2,2n {input} > {output}
     ''' 

@@ -14,19 +14,22 @@ SAMPLE_DIR = str(Path(SAMPLES['filepath'].iloc[0]).parent)
 rule download_processed_data_tar:
     output:
         compressed=temp('data/RNAss/GSE149018_processed_data_files.tar.gz'),
-        RNAss_dir=directory(SAMPLE_DIR)
+        RNAss_dir=directory(SAMPLE_DIR),
+        uncompressed='data/RNAss/done.txt'
     shell:'''
+    rm -rf data/RNAss/
     mkdir -p data/RNAss/
     wget -O {output.compressed} \
     "ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE149nnn/GSE149018/suppl/GSE149018%5Fprocessed%5Fdata%5Ffiles%2Etar%2Egz"
-    tar -xf {output.compressed} -C {output.RNAss_dir}
+    cd {output.RNAss_dir}
+    tar -xf {output.compressed}
+    touch {output.uncompressed}
     '''
-
-
+    
 
 rule touch_all_files:
     input:
-        SAMPLE_DIR
+        'data/RNAss/done.txt'
     output:
         expand(
            SAMPLES['filepath'].tolist()
