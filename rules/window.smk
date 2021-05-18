@@ -13,7 +13,7 @@ rule sort_bedgraph_inputs:
     output:
         'output/windowed_regions/sorted_regions/{region_name}.{strand}.bedgraph'
     params:
-        filepath=lambda wildcards: REGIONS.loc[REGIONS['region_name'] == wildcards.region_name]['filepath']
+        filepath=lambda wildcards: REGIONS.loc[(REGIONS['region_name'] == wildcards.region_name) & (REGIONS['strand'] == wildcards.strand)]['filepath'][0]
     shell:'''
     sort -k 1,1 -k2,2n {params.filepath} > {output}
     '''

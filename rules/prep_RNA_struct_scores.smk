@@ -1,17 +1,20 @@
 # Download and process bedgraph files from GSE149018 RNA structure (double
 # stranded ness) score calculations
 import pandas as pd
+from pathlib import Path
 
 
-ss_samples = pd.read_table(
-    'samples/RNAss_samples.tsv'
-).set_index("sample_name", drop=False)
+# ss_samples = pd.read_table(
+#     'samples/RNAss_samples.tsv'
+# ).set_index("sample_name", drop=False)
+
+SAMPLE_DIR = str(Path(SAMPLES['filepath'].iloc[0]).parent)
 
 
 rule download_processed_data_tar:
     output:
         compressed=temp('data/RNAss/GSE149018_processed_data_files.tar.gz'),
-        RNAss_dir=directory('data/RNAss')
+        RNAss_dir=directory(SAMPLE_DIR)
     shell:'''
     mkdir -p data/RNAss/
     wget -O {output.compressed} \
@@ -19,10 +22,12 @@ rule download_processed_data_tar:
     tar -xf {output.compressed} -C {output.RNAss_dir}
     '''
 
+
+
 rule touch_all_files:
+    input:
+        SAMPLE_DIR
     output:
         expand(
-            'data/RNAss/{sample}.{strand}.bedgraph',
-            zip, sample=ss_samples['sample_name'].tolist(),
-            strand=ss_samples['strand'].tolist()
+           SAMPLES['filepath'].tolist()
         )

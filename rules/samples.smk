@@ -1,11 +1,5 @@
 from pathlib import Path
 
-# SAMPLE_NAMES = SAMPLES['sample_name'].tolist()
-# FILE_EXT = [Path(SAMPLES.loc[sample_name]['filepath']).suffix.replace('.', '') 
-#             for sample_name in SAMPLE_NAMES]
-# STRAND = SAMPLES['strand'].tolist()
-
-
 
 # rule sym_link_sample:
 #     output:

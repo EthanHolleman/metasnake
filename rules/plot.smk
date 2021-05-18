@@ -6,8 +6,8 @@ def metaplot_input(*args, **kwargs):
     '''
     return expand(
         expand(
-        'output/average_coverage/{bed_or_bedgraph}/{region}.{sample_name}.avg.tsv',
-        zip, bed_or_bedgraph=FILE_EXT, sample_name=SAMPLE_NAMES, allow_missing=True
+        'output/average_coverage/bedgraph/{region}.{sample_name}.avg.tsv',
+        zip, sample_name=SAMPLE_NAMES, allow_missing=True
         ),
         region=REGION_NAMES
     )
@@ -21,6 +21,8 @@ rule make_metaplots:
     output:
         'output/plots/{run_name}.metaplot.png'
     script:"../scripts/metaplot.R"
+
+
 
 rule make_coverage_dist_plot:
     conda:
