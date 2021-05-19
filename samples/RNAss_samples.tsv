@@ -1,0 +1,5 @@
+filename	strand	sample_name
+R749H_neg_structure_score_no_FP.bedgraph	fwd	ssR749Hfwd
+R749H_pos_structure_score_no_FP.bedgraph	rev	ssR749Hrev
+WT_neg_structure_score_no_FP.bedgraph	fwd	ssWTfwd
+WT_pos_structure_score_no_FP.bedgraph	rev	ssWTrev
