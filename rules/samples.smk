@@ -1,4 +1,5 @@
-from pathlib import Path
+# Sort all sample bedgraphs before handing off to
+# bedtools
 
 
 rule sort_samples_bedgraph:

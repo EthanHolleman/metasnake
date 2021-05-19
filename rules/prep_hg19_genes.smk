@@ -1,5 +1,6 @@
 # convert hg19 genes bed into strand seperated
-# bedgraph files
+# bedgraph files this assumes that hg19 file
+# already exists in the data directory
 
 GENES = 'data/hg19/hg19_apprisplus_gene.bed'
 

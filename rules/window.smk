@@ -1,30 +1,11 @@
 
-# rule sym_link_region_bed:
-#     output:
-#         'output/windowed_regions/sym_links/{region_name}.{strand}.bedgraph'
-#     params:
-#         region_file=lambda wildcards: REGIONS.loc[wildcards.region_name]['filepath']
-#     shell:'''
-#     mkdir -p output/windowed_regions/sym_links
-#     ln -sf {params.region_file} {output}
-#     '''
-
-# rule sort_bedgraph_inputs:
-#     output:
-#         'output/windowed_regions/sorted_regions/{region_name}.{strand}.sorted.bedgraph'
-#     params:
-#         filepath=lambda wildcards: REGIONS.loc[(REGIONS['region_name'] == wildcards.region_name) & (REGIONS['strand'] == wildcards.strand)]['filepath'][0]
-#     shell:'''
-#     mkdir -p output/windowed_regions/sorted_regions/
-#     sort -k 1,1 -k2,2n {params.filepath} > {output}
-#     '''
 
 
 rule make_window_regions:
     conda:
         '../envs/bedtools.yml'
     input:
-        'output/prep/hg19_apprisplus.{strand}.sorted.bedgraph'
+        'output/regions/{region_name}.{strand}.sorted.bedgraph'
     output:
         'output/windowed_regions/windows/{region_name}.{strand}.windowed.bedgraph'
     params:
@@ -77,7 +58,7 @@ rule window_coverage_all_samples:
     input:
         expand(
             'output/window_coverage/{region_name}.{sample_name}.all.coverage.bedgraph',
-            zip, sample_name=SAMPLES.index.tolist(), strand=SAMPLES['strand'].tolist(),
+            zip, sample_name=SAMPLES.index.tolist(),
             region_name=REGIONS.index.tolist()
         )
     output:
