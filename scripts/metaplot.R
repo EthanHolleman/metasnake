@@ -2,7 +2,7 @@ library(ggplot2)
 library(ggpubr)
 library(tidyr)
 library(RColorBrewer)
-#library(umap)
+library(umap)
 
 
 get_sample_from_input_file <- function(input.path){
@@ -37,19 +37,39 @@ read_meta <- function(file.path){
   file.path <- as.character(file.path)
 
   print(file.path)
-  print(typeof(file.path))
-  df <- as.data.frame(read.table(file.path, header=F))
-  df.agg <- as.data.frame(aggregate(df, list(df$V1), function(x) c(mean=mean(x), se=confidence_interval(x))))
+  as.data.frame(read.table(file.path, header=F))
+
+}
+
+format_data_for_metaplot <- function(df){
+
+  df.vals <- df[, c(4, 5)]  # take only the bin number and score
+  df.agg <- as.data.frame(aggregate(df.vals, list(bin=df.vals[, 1]), function(x) c(mean=mean(x), se=confidence_interval(x))))
   # aggregate by bin, taking the mean and standard error for each bin
   # return just bin, mean and se
   region <- get_region_from_input_file(file.path)
   sample <- get_sample_from_input_file(file.path)
-  df.agg <- as.data.frame(df.agg$V2)
-  df.agg$bin <- rownames(df.agg)
-  df.agg$region <- region
-  df.agg$sample <- sample
-  df.agg  
+  df.plot <- as.data.frame(df.agg$V5)  # holds mean and se
+  df.plot$bin <- df.agg$bin
+  df.plot$sample <- sample
+  df.plot$region <- region
+
+  df.plot
+
+
 }
+
+format_data_for_umap <- function(df){
+
+  n_bins = 100
+  groups <-  split(df, (seq(nrow(df))-1) %/% n_bins)
+  for (i in 1:length(groups)){
+    groups[[i]] <- as.data.frame(spread(groups[[i]], bin, mean))
+  }
+  df.umap <- do.call("rbind", listOfDataFrames)
+  
+}
+
 
 plot_meta_region <- function(df.agg){
 
@@ -71,13 +91,20 @@ plot_meta_region <- function(df.agg){
 
 }
 
+format_df_for_umap <- function(big.df.unagg){
+
+  # length should be multible of 100
+
+
+}
+
 # format_df_for_umap <- function(big.df){
 
 #   # samples need to be rows and then columns
 #   # become values, also need to seperate
 #   # by each region
 #   regions.dfs <- list()
-#   regions <- unique(big.df$regions)
+#   regions <- unique(big.df$region)
 #   for (i in 1:length(regions)){
 
 #     regions.dfs[[i]] <- subset(big.df, region==regions[[i]])
@@ -88,25 +115,23 @@ plot_meta_region <- function(df.agg){
     
 #     df <- regions.dfs[[i]]
 #     df <- spread(df, sample, bin)
-#     umap <- as.data.frame(umap(df))
-
-
-
+#     umap.df <- as.data.frame(umap(df))
+#     umap.dfs[[i]] <- umap.df
 
 #   }
-
-
 
 # }
 
 
 input.files <- snakemake@input
-dfs <- list()
+dfs. <- list()
 for (i in 1:length(input.files)){
     dfs[[i]] <- read_meta(input.files[i])
 }
 
 big.df <- do.call("rbind", dfs)
+#umaps <- format_df_for_umap(big.df)
+save.image('test.RData')
 region_plts <- list()
 
 #colors <- colorRampPalette(brewer.pal(8, "Dark2"))(length(dfs))
@@ -119,7 +144,7 @@ regions <- unique(big.df$region)
 
 # }
 
-save.image()
+
 
 alphabet <- c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H')
 
