@@ -5,11 +5,8 @@ def metaplot_input(*args, **kwargs):
     bed and bedgraph input sample files.
     '''
     return expand(
-        expand(
-        'output/average_coverage/bedgraph/{region}.{sample_name}.avg.tsv',
-        zip, sample_name=SAMPLE_NAMES, allow_missing=True
-        ),
-        region=REGION_NAMES
+        'output/window_coverage/{region_name}.{sample_name}.all.coverage.bedgraph',
+        sample_name=set(SAMPLE_NAMES), region_name=set(REGION_NAMES)
     )
 
 

@@ -19,7 +19,7 @@ rule seperate_rev_strand:
     output:
         'output/prep/hg19_apprisplus.rev.bed' 
     shell:'''
-    awk '$6 == "+" {{print $0}}' {input} > {output}
+    awk '$6 == "-" {{print $0}}' {input} > {output}
     '''
 
 
@@ -35,17 +35,14 @@ rule sort_bed_for_bedgraph_conversion:
 
 
 rule convert_bed_to_bedgraph:
-    # convert all input bed files to bedgraph using bedtools genome cov
     conda:
         '../envs/bedtools.yml'
     input:
         'output/prep/hg19_apprisplus.{strand}.sorted.bed'
     output:
         'output/prep/hg19_apprisplus.{strand}.bedgraph'
-    params:
-        genome=config['genome']
     shell:'''
-    bedtools genomecov -bg -g {params.genome} -i {input} > {output}
+    awk '{{ print $1"\t"$2"\t"$3"\t"$5 }}' {input} > {output}
     '''
 
 
