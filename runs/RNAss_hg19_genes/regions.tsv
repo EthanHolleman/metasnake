@@ -1,5 +1,5 @@
 region_name	filepath	strand
 hg19_genes	output/prep/hg19_apprisplus.fwd.sorted.bedgraph	fwd
 hg19_genes	output/prep/hg19_apprisplus.rev.sorted.bedgraph	rev
-sDRIP	data/DRIP/NT2DRIPc_fwd.bedgraph	fwd
-sDRIP	data/DRIP/NT2DRIPc_rev.bedgraph	rev
+sDRIP	data/prep/DRIP/NT2DRIPc_fwd.bedgraph	fwd
+sDRIP	data/prep/DRIP/NT2DRIPc_rev.bedgraph	rev
