@@ -1,0 +1,3 @@
+region_name	filepath	strand
+test_region	data/test/regions.rev.bedgraph	rev
+test_region	data/test/regions.fwd.bedgraph	fwd

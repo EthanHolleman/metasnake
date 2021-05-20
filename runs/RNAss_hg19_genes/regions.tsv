@@ -5,3 +5,5 @@ sDRIP	output/prep/DRIP/NT2DRIPc_fwd.bedgraph	fwd
 sDRIP	output/prep/DRIP/NT2DRIPc_rev.bedgraph	rev
 sDRIPext	output/prep/DRIP/NT2DRIPc_rev.1kbext.bedgraph	rev
 sDRIPext	output/prep/DRIP/NT2DRIPc_fwd.1kbext.bedgraph	fwd
+random	output/prep/random/random_fwd.bedgraph	fwd
+random	output/prep/random/random_rev.bedgraph	rev

@@ -1,0 +1,6 @@
+samples: "runs/test_run/samples.tsv"
+regions: "runs/test_run/regions.tsv"
+n_windows: 100
+cluster_file: "cluster.yml"
+genome: "data/hg19/hg19.chrom.sizes"
+name: "test_run"
