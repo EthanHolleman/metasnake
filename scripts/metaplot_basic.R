@@ -39,8 +39,10 @@ read_tsv <- function(filepath){
     for (i in 1:nrow(df)){
         se[[i]] <- confidence_interval(df[i, ]$sd, df[i, ]$count)
     }
+    df$mean <- as.numeric(df$mean)
     df$sample <- sample
     df$region <- region
+    df$se <- as.numeric(unlist(se))
 
     df
 
@@ -65,12 +67,13 @@ make_metaplot <- function(df){
 main <- function(){
 
     input.files <- unique(snakemake@input)
+    save.image('basicmeta.RData')
     dfs <- list()
     for (i in 1:length(input.files)){
         dfs[[i]] <- read_tsv(input.files[[i]])
     }
     big.df <- do.call("rbind", dfs)
-    metaplot <- plot_meta_region(big.df)
+    metaplot <- make_metaplot(big.df)
     ggsave(as.character(snakemake@output), metaplot, width=14, height=10, unit='in')
 
 }
