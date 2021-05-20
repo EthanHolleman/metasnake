@@ -10,7 +10,18 @@ def metaplot_input(*args, **kwargs):
     )
 
 
-rule make_metaplots:
+def metaplot_basic_input(*args, **kwargs):
+    '''Specifies input files for make_metaplot rule in a way that is aware
+    of the sample files original file extension. This avoids confusing
+    bed and bedgraph input sample files.
+    '''
+    return expand(
+        'output/window_coverage/{region_name}.{sample_name}.all_stats.tsv',
+        sample_name=set(SAMPLE_NAMES), region_name=set(REGION_NAMES)
+    )
+
+
+rule make_metaplots_extended:
     conda:
         '../envs/R.yml'
     input:
@@ -18,6 +29,16 @@ rule make_metaplots:
     output:
         'output/plots/{run_name}.metaplot.png'
     script:"../scripts/metaplot.R"
+
+
+rule make_metaplots_basic:
+    conda:
+        '../envs/R.yml'
+    input:
+        lambda wildcards: metaplot_basic_input()
+    output:
+        'output/plots/{run_name}.metaplot.basic.png'
+    script:'../scripts/metaplot_basic.R'
 
 
 

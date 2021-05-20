@@ -12,7 +12,7 @@ rule make_window_regions:
         window_size = config['n_windows'],
         reverse_winnums = lambda wildcards: '-reverse' if (wildcards.strand == 'rev') else ''
     shell:'''
-    mkdir -p output/windowed_regions
+    mkdir -o output/windowed_regions
     bedtools makewindows -b {input} \
     -n 100 -i winnum {params.reverse_winnums} > {output}
     '''
@@ -52,6 +52,71 @@ rule combine_coverage_strands:
     shell:'''
     cut -b 1- {input.fwd} {input.rev} > {output}
     '''
+
+
+rule sort_coverage_for_groupby:
+    # sort by window number
+    input:
+        'output/window_coverage/{region_name}.{sample_name}.all.coverage.bedgraph'
+    output:
+        'output/window_coverage/{region_name}.{sample_name}.all.coverage.sorted.bedgraph'
+    shell:'''
+    sort -k4,4 {input} > {output}
+    '''
+
+
+rule group_bins_mean:
+    conda:
+        '../envs/bedtools.yml'
+    input:
+        'output/window_coverage/{region_name}.{sample_name}.all.coverage.sorted.bedgraph'
+    output:
+        'output/window_coverage/{region_name}.{sample_name}.all.grouped.mean.tsv'
+    shell:'''
+    bedtools groupby -i {input} -g 4 -o mean -c 5 > {output} && [[ -s {output} ]]
+    '''
+
+
+rule group_bins_sd:
+    conda:
+        '../envs/bedtools.yml'
+    input:
+        'output/window_coverage/{region_name}.{sample_name}.all.coverage.sorted.bedgraph'
+    output:
+        'output/window_coverage/{region_name}.{sample_name}.all.grouped.sd.tsv'
+    shell:'''
+    bedtools groupby -i {input} -g 4 -o stdev -c 5 > {output} && [[ -s {output} ]]
+    '''
+
+
+rule group_bins_count:
+    conda:
+        '../envs/bedtools.yml'
+    input:
+        'output/window_coverage/{region_name}.{sample_name}.all.coverage.sorted.bedgraph'
+    output:
+        'output/window_coverage/{region_name}.{sample_name}.all.grouped.count.tsv'
+    shell:'''
+    bedtools groupby -i {input} -g 4 -o count -c 5 > {output} && [[ -s {output} ]]
+    '''
+
+
+rule combine_mean_sd_count_groups:
+    input:
+        mean='output/window_coverage/{region_name}.{sample_name}.all.grouped.mean.tsv',
+        sd='output/window_coverage/{region_name}.{sample_name}.all.grouped.sd.tsv',
+        item_count='output/window_coverage/{region_name}.{sample_name}.all.grouped.count.tsv'
+    output:
+        'output/window_coverage/{region_name}.{sample_name}.all_stats.tsv'
+    shell:'''
+    paste {input.mean} {input.sd} {input.item_count} | cut -f 1,2,4,6 > {output}
+    # columns should be bin, mean, ds and count
+    '''
+    
+
+
+
+
 
 
 rule window_coverage_all_samples:
