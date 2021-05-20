@@ -21,6 +21,7 @@ include: 'rules/samples.smk'
 include: 'rules/regions.smk'
 include: 'rules/prep_drip.smk'
 include: 'rules/prep_RNA_struct_scores.smk'
+include: 'rules/prep_random_regions.smk'
 include: 'rules/prep_hg19_genes.smk'
 
 
@@ -45,6 +46,8 @@ STRAND = SAMPLES['strand'].tolist()
 # samples or regions tsv which are given in the config file. That way
 # when these filepaths are given to rule all, they can be generated from the
 # precursor files if they do not already exist. 
+
+print(REGION_FILES)
 
 rule all:
     input:
