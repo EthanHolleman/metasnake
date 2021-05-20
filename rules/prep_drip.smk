@@ -21,10 +21,21 @@ rule bigwig_to_bedgraph:
     input:
         'data/DRIP/{sample}_{strand}.bw'
     output:
-        'output/prep/DRIP/{sample}_{strand}.bedgraph'
+        'output/prep/DRIP/{sample}_{strand}.premerge.bedgraph'
     shell:'''
     mkdir -p output/prep/DRIP/
     bigWigToBedGraph {input} {output}
+    '''
+
+rule merge_drip_bedgraph:
+    conda:
+        '../envs/bedtools.yml'
+    input:
+        'output/prep/DRIP/{sample}_{strand}.premerge.bedgraph'
+    output:
+        'output/prep/DRIP/{sample}_{strand}.bedgraph'
+    shell:'''
+    bedtools merge -i {input} > {output}
     '''
 
 
@@ -34,12 +45,27 @@ rule extend_drip_regions:
     input:
         'output/prep/DRIP/{sample}_{strand}.bedgraph'
     output:
-        'output/prep/DRIP/{sample}_{strand}.1kbext.bedgraph'
+        'output/prep/DRIP/{sample}_{strand}.premerge.1kbext.bedgraph'
     params:
         genome = config['genome']
     shell:'''
     mkdir -p output/prep/DRIP/
     bedtools slop -i {input} -g {params.genome} -b 1000 > {output}
+    '''
+
+
+rule merge_extend_drip_regions:
+    conda:
+        '../envs/bedtools.yml'
+    input:
+        'output/prep/DRIP/{sample}_{strand}.premerge.1kbext.bedgraph'
+    output:
+        'output/prep/DRIP/{sample}_{strand}.1kbext.bedgraph'
+    params:
+        genome = config['genome']
+    shell:'''
+    mkdir -p output/prep/DRIP/
+    bedtools merge -i {input} > {output}
     '''
 
 

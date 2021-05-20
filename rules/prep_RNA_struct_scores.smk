@@ -26,10 +26,10 @@ rule download_processed_data_tar:
     '''
     
 
-rule touch_all_files:
-    input:
-        'data/RNAss/done.txt'
-    output:
-        expand(
-           SAMPLES['filepath'].tolist()
-        )
+# rule touch_all_files:
+#     input:
+#         'data/RNAss/done.txt'
+#     output:
+#         expand(
+#            SAMPLES['filepath'].tolist()
+#         )

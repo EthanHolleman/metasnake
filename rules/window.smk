@@ -12,7 +12,7 @@ rule make_window_regions:
         window_size = config['n_windows'],
         reverse_winnums = lambda wildcards: '-reverse' if (wildcards.strand == 'rev') else ''
     shell:'''
-    mkdir -o output/windowed_regions
+    mkdir -p output/windowed_regions
     bedtools makewindows -b {input} \
     -n 100 -i winnum {params.reverse_winnums} > {output}
     '''
