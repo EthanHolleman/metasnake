@@ -3,3 +3,5 @@ hg19_genes	output/prep/hg19_apprisplus.fwd.sorted.bedgraph	fwd
 hg19_genes	output/prep/hg19_apprisplus.rev.sorted.bedgraph	rev
 sDRIP	output/prep/DRIP/NT2DRIPc_fwd.bedgraph	fwd
 sDRIP	output/prep/DRIP/NT2DRIPc_rev.bedgraph	rev
+sDRIPext	output/prep/DRIP/NT2DRIPc_rev.1kbext.bedgraph	rev
+sDRIPext	output/prep/DRIP/NT2DRIPc_fwd.1kbext.bedgraph	fwd
