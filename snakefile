@@ -14,17 +14,18 @@ wildcard_constraints:
    fwd_rev_strand = '\bfwd\b|\brev\b'
 
 
-include: 'rules/drip.smk'
 include: 'rules/fisher_exact.smk'
 include: 'rules/plot.smk'
 include: 'rules/window.smk'
-include: 'rules/average_windows.smk'
 include: 'rules/samples.smk'
+include: 'rules/regions.smk'
+include: 'rules/prep_drip.smk'
 include: 'rules/prep_RNA_struct_scores.smk'
 include: 'rules/prep_hg19_genes.smk'
 
 
 METAPLOT = 'output/plots/{}.metaplot.png'.format(RUN_NAME)
+METAPLOT_BASIC = 'output/plots/{}.metaplot.basic.png'.format(RUN_NAME)
 # # These plots below are in progress
 # FISHER_PLOT = 'output/plots/{}.fisher.png'.format(RUN_NAME)
 # OVERLAP_DIST = 'output/plots/{}.overlap_count_dist.png'.format(RUN_NAME)
@@ -49,7 +50,7 @@ rule all:
     input:
       regions=REGION_FILES,  # check if any region or sample files need prep
       samples=SAMPLE_FILES,
-      plots=[METAPLOT]
+      plots=[METAPLOT_BASIC]
 
 
 
