@@ -6,6 +6,7 @@ import random
 from pathlib import Path
 import pandas as pd
 import numpy as np
+import csv
 
 CHRS = [f"chr{name}" for name in list(range(1, 3))]
 MEAN_LEN = 4000
@@ -18,137 +19,189 @@ NUM_SAMPLES = 2
 OUTPUT_DIR = "test_beds"
 
 
-def random_region():
-    '''Generate a number of random regions (these would be equal
-    to genes or similar) for testing. 
-
-    Returns:
-        list: List of tuples describing regions in bed6.
-    '''
-
-    features = []
-    for i in range(NUM_FEATS):
-        chromo = random.choice(CHRS)
-        start = random.randint(0, CHR_LEN)
-        #end = start + abs(int(np.random.normal(MEAN_LEN, SD))) + 1
-        #end = start + random.randint(start+1, start+1+MEAN_LEN)
-        end = start + MEAN_LEN
-        strand = random.choice(["-", "+"])
-        assert end > start, f"End position in region < start! {end - start}"
-        features.append(
-            (
-                chromo,  # chromosome
-                start,  # start pos
-                end,  # end pos
-                i,  # name (index)
-                0,  # score placeholder
-                strand,  # strand
-            )
-        )
-
-    return features
+def random_region(lower_bound, upper_bound, min_length, max_length, chrs, score):
+    length = random.randint(min_length, max_length)
+    start = random.randint(0, upper_bound-(length*2))
+    end = start + length
+    chromo = random.choice(chrs)
+    return chromo, start, end, score
 
 
-def random_sample_from_regions(regions):
-    '''
-    '''
-    sample_obs = []
-    for each_region in regions:
-        for each_feature in each_region:
-            chromo, start, end, name, score, strand = each_feature
-            for i in range(OBS_PER_FEAT):
-                
-                if strand == "+":
-                    obs_start = random.randint(start+1, start+2)
-                    obs_end = obs_start + 5
-                else:
-                    obs_start = end-5
-                    obs_end = end - 1
-
-                #obs_start = abs(int(np.random.normal(MEAN_LEN, SD))) + 1
-                #obs_end = random.randint(obs_start+1, end)
-                
-
-                assert obs_start >= start and obs_end <= end, 'Observation outside feature!'
-                assert obs_end > obs_start, f'End not greater than start! {obs_start} {obs_end}'
-
-                sample_obs.append((chromo, obs_start, obs_end, name, score, strand))
-    return sample_obs
+def make_region_bedgraph(num_regions, upper_bound, max_length, chrs, score):
+    # make non-overlaping regions (these are the "genes" we are looking at)
+    res = set()
+    for _ in range(num_regions):
+        temp = random.randint(0, upper_bound - max_length) 
+        while any(temp >= idx and temp <= idx + max_length for idx in res):
+            temp = random.randint(0, tot - max_length) 
+        res.add(temp)
+    chromo = random.choice(chrs)
+    res = [(chromo, idx, idx + max_length, score) for idx in res]
+    return res
 
 
-def write_list_to_bed(tuple_list, path):
-    bed_df = pd.DataFrame(tuple_list)
-    bed_df.to_csv(str(path), sep="\t", header=False, index=False)
+def make_observations(regions_bedgraph, location_func):
+    observations = []
+    for each_region in regions_bedgraph:
+        chromo, start, end, score = each_region
+        obs_start, obs_end, score = location_func(start, end)
+        observations.append(
+            chromo, obs_start, obs_end, score
+    )
+    return observations
 
 
-def make_sample_tsv(sample_paths):
-    sample_names = [Path(sample).stem for sample in sample_paths]
-    abs_paths = [Path(sample).absolute() for sample in sample_paths]
-    output_path = Path(OUTPUT_DIR).joinpath('samples.tsv')
-    pd.DataFrame(
-        list(zip(sample_names, abs_paths)), columns=['sample_name', 'filepath']
-        ).to_csv(str(output_path), sep='\t')
-    
-    return str(output_path)
+def write_bedgraph(filepath, tuples):
+    with open(filepath, 'w') as handle:
+        writer = csv.writer(handle, sep='\t')
+        writer.writerows(tuples)
+    return filepath
 
 
-def make_regions_tsv(region_paths):
-    sample_names = [Path(sample).stem for sample in region_paths]
-    abs_paths = [Path(sample).absolute() for sample in region_paths]
-    output_path = Path(OUTPUT_DIR).joinpath('regions.tsv')
-    pd.DataFrame(
-        list(zip(sample_names, abs_paths)), columns=['region_name', 'filepath']
-        ).to_csv(str(output_path), sep='\t')
-    
-    return str(output_path)
+def make_region()
 
-
-def make_config_file(samples_file, regions_file):
-    config = f'''
-samples: "{samples_file}"
-regions: "{regions_file}"
-n_windows: 100
-cluster_file: "cluster.yml"
-genome: "test_beds/hg19.chrom.sizes"
-name: "test_metaploter"
-'''
-    config_path = Path(OUTPUT_DIR).joinpath('config.yml')
-    with open(str(config_path), 'w') as handle:
-        handle.write(config)
-
-    return str(config_path)
-    
 
 def main():
-    if not Path(OUTPUT_DIR).is_dir():
-        Path(OUTPUT_DIR).mkdir()
+    region_files = [f'{OUTPUT_DIR}/region_{i}.bedgraph' for i in range(NUM_REGIONS)]
+    sample_files = [f'{OUTPUT_DIR}/sample_{i}.bedgraph' for i in range(NUM_SAMPLES)]
 
-    sample_paths = []
-    region_paths = []
-    region_features = []
 
-    for i in range(NUM_REGIONS):
-        region_path = str(Path(OUTPUT_DIR).joinpath(f"TEST_REGION_{i}.bed"))
-        region = random_region()
-        write_list_to_bed(region, region_path)
-        region_paths.append(region_path)
-        region_features.append(region)
 
-    for j in range(NUM_SAMPLES):
-        sample_path = str(Path(OUTPUT_DIR).joinpath(f"TEST_SAMPLE_{j}.bed"))
-        sample = random_sample_from_regions(region_features)
-        write_list_to_bed(sample, sample_path)
-        sample_paths.append(sample_path)
+
+
+
+
+# def random_region():
+#     '''Generate a number of random regions (these would be equal
+#     to genes or similar) for testing. 
+
+#     Returns:
+#         list: List of tuples describing regions in bed6.
+#     '''
+
+#     features = []
+#     for i in range(NUM_FEATS):
+#         chromo = random.choice(CHRS)
+#         start = random.randint(0, CHR_LEN)
+#         #end = start + abs(int(np.random.normal(MEAN_LEN, SD))) + 1
+#         #end = start + random.randint(start+1, start+1+MEAN_LEN)
+#         end = start + MEAN_LEN
+#         strand = random.choice(["-", "+"])
+#         assert end > start, f"End position in region < start! {end - start}"
+#         features.append(
+#             (
+#                 chromo,  # chromosome
+#                 start,  # start pos
+#                 end,  # end pos
+#                 i,  # name (index)
+#                 0,  # score placeholder
+#                 strand,  # strand
+#             )
+#         )
+
+#     return features
+
+
+# def random_sample_from_regions(regions):
+#     '''
+#     '''
+#     sample_obs = []
+#     for each_region in regions:
+#         for each_feature in each_region:
+#             chromo, start, end, name, score, strand = each_feature
+#             for i in range(OBS_PER_FEAT):
+                
+#                 if strand == "+":
+#                     obs_start = random.randint(start+1, start+2)
+#                     obs_end = obs_start + 5
+#                 else:
+#                     obs_start = end-5
+#                     obs_end = end - 1
+
+#                 #obs_start = abs(int(np.random.normal(MEAN_LEN, SD))) + 1
+#                 #obs_end = random.randint(obs_start+1, end)
+                
+
+#                 assert obs_start >= start and obs_end <= end, 'Observation outside feature!'
+#                 assert obs_end > obs_start, f'End not greater than start! {obs_start} {obs_end}'
+
+#                 sample_obs.append((chromo, obs_start, obs_end, name, score, strand))
+#     return sample_obs
+
+
+# def write_list_to_bed(tuple_list, path):
+#     bed_df = pd.DataFrame(tuple_list)
+#     bed_df.to_csv(str(path), sep="\t", header=False, index=False)
+
+
+# def make_sample_tsv(sample_paths):
+#     sample_names = [Path(sample).stem for sample in sample_paths]
+#     abs_paths = [Path(sample).absolute() for sample in sample_paths]
+#     output_path = Path(OUTPUT_DIR).joinpath('samples.tsv')
+#     pd.DataFrame(
+#         list(zip(sample_names, abs_paths)), columns=['sample_name', 'filepath']
+#         ).to_csv(str(output_path), sep='\t')
     
-    make_config_file(
-        make_sample_tsv(sample_paths),
-        make_regions_tsv(region_paths)
-    )
+#     return str(output_path)
+
+
+# def make_regions_tsv(region_paths):
+#     sample_names = [Path(sample).stem for sample in region_paths]
+#     abs_paths = [Path(sample).absolute() for sample in region_paths]
+#     output_path = Path(OUTPUT_DIR).joinpath('regions.tsv')
+#     pd.DataFrame(
+#         list(zip(sample_names, abs_paths)), columns=['region_name', 'filepath']
+#         ).to_csv(str(output_path), sep='\t')
+    
+#     return str(output_path)
+
+
+# def make_config_file(samples_file, regions_file):
+#     config = f'''
+# samples: "{samples_file}"
+# regions: "{regions_file}"
+# n_windows: 100
+# cluster_file: "cluster.yml"
+# genome: "test_beds/hg19.chrom.sizes"
+# name: "test_metaploter"
+# '''
+#     config_path = Path(OUTPUT_DIR).joinpath('config.yml')
+#     with open(str(config_path), 'w') as handle:
+#         handle.write(config)
+
+#     return str(config_path)
+    
+
+# def main():
+#     if not Path(OUTPUT_DIR).is_dir():
+#         Path(OUTPUT_DIR).mkdir()
+
+#     sample_paths = []
+#     region_paths = []
+#     region_features = []
+
+#     for i in range(NUM_REGIONS):
+#         region_path = str(Path(OUTPUT_DIR).joinpath(f"TEST_REGION_{i}.bedgraph"))
+#         region = random_region()
+#         write_list_to_bed(region, region_path)
+#         region_paths.append(region_path)
+#         region_features.append(region)
+
+#     for j in range(NUM_SAMPLES):
+#         sample_path = str(Path(OUTPUT_DIR).joinpath(f"TEST_SAMPLE_{j}.bedgraph"))
+#         sample = random_sample_from_regions(region_features)
+#         write_list_to_bed(sample, sample_path)
+#         sample_paths.append(sample_path)
+    
+#     make_config_file(
+#         make_sample_tsv(sample_paths),
+#         make_regions_tsv(region_paths)
+#     )
 
     
     
 
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
