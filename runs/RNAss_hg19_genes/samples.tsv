@@ -1,5 +1,5 @@
 sample_name	filepath	strand
-ssR749H	data/RNAss/R749H_pos_structure_score_no_FP.bedgraph	fwd
-ssR749H	data/RNAss/R749H_neg_structure_score_no_FP.bedgraph	rev
+ssR749H	data/RNAss/R749H_structure_score_pos_non_unique.bedgraph	fwd
+ssR749H	data/RNAss/R749H_structure_score_neg_non_unique.bedgraph	rev
 ssWT	data/RNAss/WT_structure_score_pos_non_unique.bedgraph	fwd
 ssWT	data/RNAss/WT_structure_score_neg_non_unique.bedgraph	rev

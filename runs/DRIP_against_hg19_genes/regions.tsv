@@ -1,2 +1,5 @@
-region_name	filepath
-hg19_genes	/home/ethollem/projects/metaploter/data/hg19/hg19_apprisplus_gene.bed
+region_name	filepath	strand
+TSS+-2kb	output/prep/hg19_apprisplus.rev.TSS.2kb.bedgraph	rev
+TSS+-2kb	output/prep/hg19_apprisplus.fwd.TSS.2kb.bedgraph	fwd
+TTS+-2kb	output/prep/hg19_apprisplus.rev.TTS.2kb.bedgraph	rev
+TTS+-2kb	output/prep/hg19_apprisplus.fwd.TTS.2kb.bedgraph	fwd
