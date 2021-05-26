@@ -1,5 +1,5 @@
-sample_name	filepath	strand
-ssR749H	data/RNAss/R749H_structure_score_pos_non_unique.bedgraph	fwd
-ssR749H	data/RNAss/R749H_structure_score_neg_non_unique.bedgraph	rev
-ssWT	data/RNAss/WT_structure_score_pos_non_unique.bedgraph	fwd
-ssWT	data/RNAss/WT_structure_score_neg_non_unique.bedgraph	rev
+sample_name	filepath	strand	operation	null_val
+ssR749H	data/RNAss/R749H_structure_score_pos_non_unique.bedgraph	fwd	mean	0
+ssR749H	data/RNAss/R749H_structure_score_neg_non_unique.bedgraph	rev	mean	0
+ssWT	data/RNAss/WT_structure_score_pos_non_unique.bedgraph	fwd	mean	0
+ssWT	data/RNAss/WT_structure_score_neg_non_unique.bedgraph	rev	mean	0
