@@ -38,4 +38,36 @@ rule make_extended_dripc_macs_bedgraph:
     '''
 
 
+rule orrient_at_DRIP_start_2kb_rev:
+    conda:
+        '../envs/bedtools.yml'
+    input:
+        'output/prep/DRIPc_macs/DRIPc_minus_macs.bedgraph'
+    output:
+        start='output/prep/DRIPc_macs/DRIPc_minus_macs.start.bedgraph',
+        slop='output/prep/DRIPc_macs/DRIPc_minus_macs.start.2kb.bedgraph'
+    params:
+        genome=config['genome']
+    shell:'''
+    awk '{{print $1 "\t" $3 "\t" $3+1 "\t" $4}}' {input} > {output.start} && [[ -s {output.start} ]]
+    bedtools slop -i {output.start} -b 2000 > {output.slop} -g {params.genome} > {output.slop}
+    '''
+
+
+rule orrient_at_DRIP_end_2kb_fwd:
+    conda:
+        '../envs/bedtools.yml'
+    input:
+        'output/prep/DRIPc_macs/DRIPc_plus_macs.bedgraph'
+    output:
+        start='output/prep/DRIPc_macs/DRIPc_plus_macs.start.bedgraph',
+        slop='output/prep/DRIPc_macs/DRIPc_plus_macs.start.2kb.bedgraph'
+    params:
+        genome=config['genome']
+    shell:'''
+    awk '{{print $1 "\t" $2 "\t" $2+1 "\t" $4}}' {input} > {output.start} && [[ -s {output.start} ]]
+    bedtools slop -i {output.start} -b 2000 > {output.slop} -g {params.genome} > {output.slop}
+    '''
+
+
 

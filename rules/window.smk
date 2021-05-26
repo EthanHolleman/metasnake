@@ -31,6 +31,20 @@ rule sort_windowed_region_file:
 
 
 rule window_coverage_bedgraph:
+    # Calculate summary statistic for windowed regions using bedtools map.
+    # Map will collect regions by their number and then apply the operation
+    # specified in the sample.tsv file for that sample. If creating a metaplot
+    # of something along the lines of "reads" then a sum op should be used
+    # because this results in final output being average number of "reads"
+    # at that window number. However if the input data is itself already some
+    # kind of statistic it makes more sense to use a mean operation since
+    # the sum of the statistics may or may not be meaningful.
+    # The null val parameter is also important as this is used when there is no
+    # "coverage" for a given region spefied by the sample file. Setting this
+    # to "NC" in the sample.tsv file will throw out these no coverage region.
+    # Another plausible case would to be to set this value to 0 to include these
+    # regions in metaplot calculations. However, if a non-NC value is used it
+    # must be an integer.
     conda:
         '../envs/bedtools.yml'
     input:
@@ -38,17 +52,46 @@ rule window_coverage_bedgraph:
         sample='output/samples/{sample_name}.{strand}.sorted.bedgraph'
     output:
         'output/window_coverage/coverage/{region_name}.{sample_name}.{strand}.coverage.bedgraph'
+    params:
+        operation = lambda wildcards: SAMPLES.loc[
+            f'{wildcards.sample_name}{wildcards.strand}', 'operation'
+            ],
+        null_val = lambda wildcards: SAMPLES.loc[
+            f'{wildcards.sample_name}{wildcards.strand}', 'null_val'
+            ]
     shell:'''
-    bedtools map -a {input.windows} -b {input.sample} -null "0" -c 4 -o mean > {output} 
+    bedtools map -a {input.windows} -b {input.sample} -null "{params.null_val}" \
+    -c 4 -o {params.operation} > {output} 
+    '''
+
+
+rule remove_no_coverage_regions:
+    input:
+        'output/window_coverage/coverage/{region_name}.{sample_name}.{strand}.coverage.bedgraph'
+    output:
+        'output/window_coverage/coverage/{region_name}.{sample_name}.{strand}.coverage.cov.bedgraph'
+    shell:'''
+    awk '$5 != "NC" {{print $0}}' {input} > {output}
     '''
 
 
 rule combine_coverage_strands:
     input:
+        fwd='output/window_coverage/coverage/{region_name}.{sample_name}.fwd.coverage.cov.bedgraph',
+        rev='output/window_coverage/coverage/{region_name}.{sample_name}.rev.coverage.cov.bedgraph'
+    output:
+        'output/window_coverage/{region_name}.{sample_name}.all.coverage.bedgraph'
+    shell:'''
+    cut -b 1- {input.fwd} {input.rev} > {output}
+    '''
+
+
+rule combine_coverage_strands_include_no_coverage:
+    input:
         fwd='output/window_coverage/coverage/{region_name}.{sample_name}.fwd.coverage.bedgraph',
         rev='output/window_coverage/coverage/{region_name}.{sample_name}.rev.coverage.bedgraph'
     output:
-        'output/window_coverage/{region_name}.{sample_name}.all.coverage.bedgraph'
+        'output/window_coverage/{region_name}.{sample_name}.all.no_coverage.bedgraph'
     shell:'''
     cut -b 1- {input.fwd} {input.rev} > {output}
     '''

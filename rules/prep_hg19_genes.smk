@@ -58,7 +58,7 @@ rule orrient_at_TSS_2kb_rev:
         genome=config['genome']
     shell:'''
     awk '{{print $1 "\t" $3 "\t" $3+1 "\t" $4}}' {input} > {output.TSS} && [[ -s {output.TSS} ]]
-    bedtools slop -i {output.TSS} -b 1000 > {output.slop} -g {params.genome} > {output.slop}
+    bedtools slop -i {output.TSS} -b 2000 > {output.slop} -g {params.genome} > {output.slop}
     '''
 
 
@@ -74,7 +74,7 @@ rule orrient_at_TSS_2kb_fwd:
         genome=config['genome']
     shell:'''
     awk '{{print $1 "\t" $2 "\t" $2+1 "\t" $4}}' {input} > {output.TSS} && [[ -s {output.TSS} ]]
-    bedtools slop -i {output.TSS} -b 1000 > {output.slop} -g {params.genome} > {output.slop}
+    bedtools slop -i {output.TSS} -b 2000 > {output.slop} -g {params.genome} > {output.slop}
     '''
 
 
@@ -90,7 +90,7 @@ rule orrient_at_TTS_2kb_rev:
         genome=config['genome']
     shell:'''
     awk '{{print $1 "\t" $2 "\t" $2+1 "\t" $4}}' {input} > {output.TSS} && [[ -s {output.TSS} ]]
-    bedtools slop -i {output.TSS} -b 1000 > {output.slop} -g {params.genome} > {output.slop}
+    bedtools slop -i {output.TSS} -b 2000 > {output.slop} -g {params.genome} > {output.slop}
     '''
 
 
@@ -106,7 +106,7 @@ rule orrient_at_TTS_2kb_fwd:
         genome=config['genome']
     shell:'''
     awk '{{print $1 "\t" $3 "\t" $3+1 "\t" $4}}' {input} > {output.TSS} && [[ -s {output.TSS} ]]
-    bedtools slop -i {output.TSS} -b 1000 > {output.slop} -g {params.genome} > {output.slop}
+    bedtools slop -i {output.TSS} -b 2000 > {output.slop} -g {params.genome} > {output.slop}
     '''
 
 

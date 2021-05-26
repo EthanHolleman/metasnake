@@ -1,19 +1,19 @@
 
 
-rule generate_random_hg19_regions_fwd:
+rule generate_random_hg19_regions:
     output:
-        'output/prep/random/random_fwd.bedgraph'
+        'output/prep/random/random_{direction}.uniform.bedgraph'
     params:
         genome=config['genome']
     shell:'''
-    bedtools random -g {params.genome} -n 10000 | cut -f 1,2,3,4 > {output}
+    bedtools random -g {params.genome} -n 100000 -l 3000 | cut -f 1,2,3,4 > {output}
     '''
 
-rule generate_random_hg19_regions_rev:
+rule randomize_lengths:
+    input:
+        'output/prep/random/random_{direction}.uniform.bedgraph'
     output:
-        'output/prep/random/random_rev.bedgraph'
+        'output/prep/random/random_{direction}.bedgraph'
     params:
         genome=config['genome']
-    shell:'''
-    bedtools random -g {params.genome} -n 10000 | cut -f 1,2,3,4 > {output}
-    '''
+    script:'../scripts/randomize_bed.py'

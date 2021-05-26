@@ -50,8 +50,8 @@ rule make_coverage_dist_plot:
     input:
         expand(
             'output/window_coverage/{region}.{sample_name}.all.coverage.bed',
-            region=REGIONS.index.values.tolist(),
-            sample_name=SAMPLES.index.values.tolist()
+            region=REGIONS['region_name'].tolist(),
+            sample_name=SAMPLES['sample_name'].tolist()
         )
     output:
         'output/plots/{run_name}.overlap_count_dist.png'
