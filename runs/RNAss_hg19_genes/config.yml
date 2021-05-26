@@ -1,0 +1,6 @@
+samples: "runs/RNAss_hg19_genes/samples.tsv"
+regions: "runs/RNAss_hg19_genes/regions.tsv"
+n_windows: 100
+cluster_file: "cluster.yml"
+genome: "data/hg19/hg19.chrom.sizes"
+name: "RNSss-seq_metaplot"

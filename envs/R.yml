@@ -11,3 +11,5 @@ dependencies:
   - bioconductor-metagene
   - r-rcolorbrewer
   - r-umap
+  - r-gplots
+  - r-ggforce 

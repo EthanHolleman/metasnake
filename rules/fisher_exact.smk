@@ -31,6 +31,7 @@ rule fisher_exact:
     -g {input.genome} > {output}  && [[ -s {output} ]]
     '''
 
+
 rule sort_unseperated_regions:
     input:
         'output/windowed_regions/sym_links/{region_name}.bedgraph'

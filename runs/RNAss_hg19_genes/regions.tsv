@@ -1,0 +1,13 @@
+region_name	filepath	strand
+hg19_genes	output/prep/hg19_apprisplus.fwd.sorted.bedgraph	fwd
+hg19_genes	output/prep/hg19_apprisplus.rev.sorted.bedgraph	rev
+hg19_genes_TSS2kb	output/prep/hg19_apprisplus.fwd.TSS.2kb.bedgraph	fwd
+hg19_genes_TSS2kb	output/prep/hg19_apprisplus.rev.TSS.2kb.bedgraph	rev
+hg19_genes_TTS2kb	output/prep/hg19_apprisplus.fwd.TTS.2kb.bedgraph	fwd
+hg19_genes_TTS2kb	output/prep/hg19_apprisplus.rev.TTS.2kb.bedgraph	rev
+DRIPMacs	output/prep/DRIPc_macs/DRIPc_plus_macs.bedgraph	fwd
+DRIPMacs	output/prep/DRIPc_macs/DRIPc_minus_macs.bedgraph	rev
+DRIPMacsStart2kb	output/prep/DRIPc_macs/DRIPc_plus_macs.start.2kb.bedgraph	fwd
+DRIPMacsStart2kb	output/prep/DRIPc_macs/DRIPc_minus_macs.start.2kb.bedgraph	rev
+footloop	output/prep/footloop.rev.bedgraph	rev
+footloop	output/prep/footloop.fwd.bedgraph	fwd

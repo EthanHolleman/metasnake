@@ -1,6 +1,5 @@
 
 #!/bin/bash -l
-
 mkdir -p logs
 source ~/anaconda3/etc/profile.d/conda.sh
 conda activate snakemake
@@ -10,4 +9,4 @@ snakemake -j 24 -s snakefile --cluster-config cluster.yml \
 -e {cluster.output} --mail-type ALL --mail-user {cluster.email}" \
 --conda-frontend=mamba \
 --latency-wait 100 --verbose --use-conda --rerun-incomplete \
---configfile config.yml
+--configfile runs/RNAss_hg19_genes/config.yml

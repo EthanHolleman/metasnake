@@ -1,0 +1,6 @@
+samples: "runs/RNAss_against_miRNA/samples.tsv"
+regions: "runs/RNAss_against_miRNA/regions.tsv"
+n_windows: 100
+cluster_file: "cluster.yml"
+genome: "data/hg19/hg19.chrom.sizes"
+name: "RNAss_metaplot"

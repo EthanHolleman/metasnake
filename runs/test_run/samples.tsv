@@ -1,0 +1,3 @@
+sample_name	filepath	strand
+test_sample	data/test/sample.rev.bedgraph	rev
+test_sample	data/test/sample.fwd.bedgraph	fwd
