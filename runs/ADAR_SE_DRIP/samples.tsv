@@ -1,0 +1,8 @@
+sample_name	filepath	strand	operation	null_val
+ADAREditsPerBase	/home/ethollem/projects/R-loop-splicing/output/pre_calc_processed/ADARediting.WT.fwd.bedgraph	fwd	mean	0
+ADAREditsPerBase	/home/ethollem/projects/R-loop-splicing/output/pre_calc_processed/ADARediting.WT.rev.bedgraph	rev	mean	0
+ADAREditsTotal	/home/ethollem/projects/R-loop-splicing/output/pre_calc_processed/ADAReditingTotalEdits.WT.fwd.bedgraph	fwd	sum	0
+ADAREditsTotal	/home/ethollem/projects/R-loop-splicing/output/pre_calc_processed/ADAReditingTotalEdits.WT.rev.bedgraph	rev	sum	0
+SplicingEffWT	/home/ethollem/projects/R-loop-splicing/output/pre_calc_processed/structureScore.WT.fwd.bedgraph	fwd	mean	0
+SplicingEffWT	/home/ethollem/projects/R-loop-splicing/output/pre_calc_processed/structureScore.WT.fwd.bedgraph	rev	mean	0
+

@@ -3,4 +3,4 @@ regions: "runs/ADAR_SE_DRIP/regions.tsv"
 n_windows: 100
 cluster_file: "cluster.yml"
 genome: "data/hg19/hg19.chrom.sizes"
-name: "ADAR_SE_DRIP_comparisons"
+name: "ADAR_SE_DRIP"

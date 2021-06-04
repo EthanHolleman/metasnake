@@ -1,0 +1,5 @@
+region_name	filepath	strand
+hg19exons	data/hg19/knownGene_labeled.exon.fwd.bedgraph	fwd
+hg19exons	data/hg19/knownGene_labeled.exon.rev.bedgraph	rev
+hg19introns	data/hg19/knownGene_labeled.intron.fwd.bedgraph	fwd
+hg19introns	data/hg19/knownGene_labeled.intron.rev.bedgraph	rev

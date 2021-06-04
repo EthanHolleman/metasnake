@@ -1,0 +1,6 @@
+samples: "runs/intron_exon_structure_score/samples.tsv"
+regions: "runs/intron_exon_structure_score/regions.tsv"
+n_windows: 100
+cluster_file: "cluster.yml"
+genome: "data/hg19/hg19.chrom.sizes"
+name: "intron_exon_ss_scores"
